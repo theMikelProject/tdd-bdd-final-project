@@ -104,7 +104,52 @@ def step_impl(context, element_name):
 # to get the element id of any button
 ##################################################################
 
-## UPDATE CODE HERE ##
+##################################################################
+#  Button clicks
+##################################################################
+@when('I press the "{button}" button')
+def step_impl(context, button):
+    """Click on a button identified by its text label."""
+    button_id = f"{button.lower()}-btn"
+    element = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.element_to_be_clickable((By.ID, button_id))
+    )
+    element.click()
+
+##################################################################
+#  Results table assertions
+##################################################################
+@then('I should see "{name}" in the results')
+def step_impl(context, name):
+    """Verify that a name appears in the search‐results area."""
+    found = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, "search_results"), name
+        )
+    )
+    assert found, f'"{name}" not found in results table'
+
+@then('I should not see "{name}" in the results')
+def step_impl(context, name):
+    """Verify that a name does NOT appear in the search‐results area."""
+    element = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.presence_of_element_located((By.ID, "search_results"))
+    )
+    assert name not in element.text, f'Unexpectedly found "{name}" in results'
+
+##################################################################
+#  Flash message assertion
+##################################################################
+@then('I should see the message "{message}"')
+def step_impl(context, message):
+    """Check the flash‐message area for a specific string."""
+    found = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, "flash_message"), message
+        )
+    )
+    assert found, f'Flash message "{message}" not displayed'
+
 
 ##################################################################
 # This code works because of the following naming convention:
